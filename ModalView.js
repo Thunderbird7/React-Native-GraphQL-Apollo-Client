@@ -24,28 +24,34 @@ import {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 64,
-    marginLeft: 20,
-    marginRight: 20,
-    backgroundColor: 'lightblue'
+    flex:1,
+    justifyContent: 'center',
+    paddingTop: 100,
+    paddingBottom: 100,
+    paddingLeft: 20,
+    paddingRight: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)'
+  },
+  modal: {
+    backgroundColor: 'floralwhite', 
+    padding: 10, 
+    borderRadius: 10,
   }
 })
 
 const ModalView = (props) => {
   return (
       <Modal
-        animationType={"slide"}
-        transparent={false}
-        visible={props.visible}
-        onRequestClose={() => {alert("Modal has been closed.")}}
-        >
+        animationType={"fade"}
+        transparent={true}
+        visible={props.visible} >
         <View style={styles.container}>
-        <ScrollView>
+        <ScrollView style={styles.modal}>
           <H1>{props.title}</H1>
             <Text>{props.detail}</Text>
         </ScrollView>
           <View style={{top: 20}}>
-            <Button block danger onPress={() => props.onDismiss()}>Dismiss</Button> 
+            <Button block danger onPress={() => props.onDismiss()}>Close</Button> 
           </View>  
         </View>
       </Modal>
