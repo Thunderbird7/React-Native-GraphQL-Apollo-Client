@@ -21,12 +21,13 @@ import {
   ListItem,
   Thumbnail,
   H3,
+  H1,
   Spinner,
 } from 'native-base'
 import ModalView from './ModalView'
 
 import { graphql } from 'react-apollo'
-import gql from 'graphql-tag';
+import gql from 'graphql-tag'
 
 class App extends Component {
 
@@ -61,7 +62,8 @@ class App extends Component {
   render() {
     // get allfilms props from graphql
     const data = this.props.data
-
+    console.log(data)
+    
     if (data.loading) {
       return (<Spinner />)
     } else {
@@ -69,7 +71,6 @@ class App extends Component {
         <Container>
           <Header><Title>Favorite Movie</Title></Header>
           <Content>
-            
             <List 
               dataArray={data.allFilms.edges} 
               renderRow={this.renderRow.bind(this)} />
@@ -77,15 +78,13 @@ class App extends Component {
               title={this.state.title}
               detail={this.state.detail}
               visible={this.state.modalVisible} 
-              onDismiss={()=> this.setModalVisible(false)}/>            
-            
+              onDismiss={()=> this.setModalVisible(false)}/>              
           </Content>        
         </Container>)
       } 
-    }
+  }
 
 }
-
 
 const styles = StyleSheet.create({
   container: {
