@@ -63,7 +63,7 @@ class App extends Component {
     // get allfilms props from graphql
     const data = this.props.data
     console.log(data)
-    
+
     if (data.loading) {
       return (<Spinner />)
     } else {
