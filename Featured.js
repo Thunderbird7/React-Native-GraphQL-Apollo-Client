@@ -29,19 +29,9 @@ import {
 import ModalView from './ModalView'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import codePush from 'react-native-code-push'
 import theme from './theme'
-import ScrollableTabView from 'react-native-scrollable-tab-view'
-import FeaturedPage from './Featured'
-import ChartsPage from './Charts'
-import DefaultTabbar from './DefaultTabbar'
 
-const codePushOptions = { 
-  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
-  updateDialog: true,
-  installMode: codePush.InstallMode.IMMEDIATE
- }
-class App extends Component {
+class Featured extends Component {
 
   state = {
     modalVisible: false,
@@ -52,21 +42,6 @@ class App extends Component {
 
   constructor(props) {
     super(props)
-  }
-
-  componentDidMount() {
-    codePush.checkForUpdate()
-    .then((update) => {
-      if (!update) {
-        alert('You running on lastest version!')
-        console.log('Up to date!')
-      } else {
-        console.log('An update is available!')
-      }
-    })
-    .catch((e)=>{
-      console.error(e)
-    })
   }
 
   onRefresh() {
@@ -90,7 +65,7 @@ class App extends Component {
             this.setModalVisible(true)
             this.setState({title: item.node.title, detail: item.node.openingCrawl})
         }}>
-            <Thumbnail circular size={80} style={{backgroundColor: 'dimgray'}} />
+            <Thumbnail square size={80} style={{backgroundColor: 'dimgray'}} />
             <H3 style={{color: 'goldenrod'}}>{item.node.title}</H3>
             <Text style={{color: 'dimgray'}} note>By {item.node.director}</Text>
             <Text style={{color: 'dimgray'}} note>Release {item.node.releaseDate}</Text>
@@ -99,14 +74,34 @@ class App extends Component {
   }
 
   render() {
-    return (
-    <ScrollableTabView 
-      tabBarPosition="bottom" 
-      renderTabBar={() => <DefaultTabbar backgroundColor="#424242" />}>
-      <FeaturedPage tabLabel="Featured" />
-      <ChartsPage tabLabel="Top Charts" />
-    </ScrollableTabView>
-    )
+    // get allfilms props from graphql
+    const data = this.props.data
+    console.log(data)
+
+    if (data.loading) {
+      return (<Spinner />)
+    } else {
+      return (
+        <Container theme={theme} >
+          <Header><Title> Featured Movies v7</Title></Header>
+          <Content style={{backgroundColor: '#212121'}} refreshControl={
+            <RefreshControl
+              tintColor='white'
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh.bind(this)}
+             />
+          }>
+            <List
+              dataArray={data.allFilms.edges} 
+              renderRow={this.renderRow.bind(this)} />
+            <ModalView 
+              title={this.state.title}
+              detail={this.state.detail}
+              visible={this.state.modalVisible} 
+              onDismiss={()=> this.setModalVisible(false)}/>              
+          </Content>        
+        </Container>)
+      } 
   }
 
 }
@@ -146,8 +141,5 @@ const gqlQuery = gql`
   }
 `
 
-// wrap gql and codepush to container.
-const AppWithData = graphql(gqlQuery)
-App = codePush(codePushOptions)(App)
-
-export default App
+// wrap gql to container. 
+export default graphql(gqlQuery)(Featured)
