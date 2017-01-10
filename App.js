@@ -11,6 +11,8 @@ import {
   Modal, 
   TouchableHighlight,
   TouchableOpacity,
+  RefreshControl,
+  Platform,
 } from 'react-native'
 import { 
   Container, 
@@ -25,20 +27,53 @@ import {
   Spinner,
 } from 'native-base'
 import ModalView from './ModalView'
-
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import codePush from 'react-native-code-push'
+import theme from './theme'
 
+const codePushOptions = { 
+  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+  updateDialog: true,
+  installMode: codePush.InstallMode.IMMEDIATE
+ }
 class App extends Component {
 
   state = {
     modalVisible: false,
     title: '',
     detail: '',
+    refreshing: false,
   }
 
   constructor(props) {
     super(props)
+  }
+
+  componentDidMount() {
+    codePush.checkForUpdate()
+    .then((update) => {
+      if (!update) {
+        alert('You running on lastest version!')
+        console.log('Up to date!')
+      } else {
+        console.log('An update is available!')
+      }
+    })
+    .catch((e)=>{
+      console.error(e)
+    })
+  }
+
+  onRefresh() {
+    // begin refresh
+    this.setState({refreshing: true})
+    // call refetch function
+    this.props.data.refetch()
+    .then(()=>{
+      // refetch complete.
+      this.setState({refreshing: false})
+    })
   }
 
   setModalVisible(visible) {
@@ -51,10 +86,10 @@ class App extends Component {
             this.setModalVisible(true)
             this.setState({title: item.node.title, detail: item.node.openingCrawl})
         }}>
-            <Thumbnail circular size={80} style={{backgroundColor: 'gray'}} />
-            <H3>{item.node.title}</H3>
-            <Text note>By {item.node.director}</Text>
-            <Text note>Release {item.node.releaseDate}</Text>
+            <Thumbnail circular size={80} style={{backgroundColor: 'dimgray'}} />
+            <H3 style={{color: 'goldenrod'}}>{item.node.title}</H3>
+            <Text style={{color: 'dimgray'}} note>By {item.node.director}</Text>
+            <Text style={{color: 'dimgray'}} note>Release {item.node.releaseDate}</Text>
         </ListItem>
     )
   }
@@ -68,10 +103,16 @@ class App extends Component {
       return (<Spinner />)
     } else {
       return (
-        <Container>
-          <Header><Title>Favorite Movie</Title></Header>
-          <Content>
-            <List 
+        <Container theme={theme} >
+          <Header><Title>Favorite Movies v7</Title></Header>
+          <Content style={{backgroundColor: '#212121'}} refreshControl={
+            <RefreshControl
+              tintColor='white'
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh.bind(this)}
+             />
+          }>
+            <List
               dataArray={data.allFilms.edges} 
               renderRow={this.renderRow.bind(this)} />
             <ModalView 
@@ -121,5 +162,8 @@ const gqlQuery = gql`
   }
 `
 
-export default graphql(gqlQuery)(App)
+// wrap gql and codepush to container.
+const AppWithData = graphql(gqlQuery)
+App = codePush(codePushOptions)(App)
 
+export default AppWithData(App)

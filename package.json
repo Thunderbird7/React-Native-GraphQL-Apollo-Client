@@ -12,7 +12,8 @@
     "native-base": "^0.5.18",
     "react": "15.4.1",
     "react-apollo": "^0.7.1",
-    "react-native": "0.39.2"
+    "react-native": "0.39.2",
+    "react-native-code-push": "^1.16.1-beta"
   },
   "devDependencies": {
     "babel-jest": "18.0.0",
