@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
     paddingLeft: 20,
     paddingRight: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)'
+    backgroundColor: 'rgba(0, 0, 0, 0.6)'
   },
   modal: {
     backgroundColor: 'floralwhite', 
@@ -51,7 +51,7 @@ const ModalView = (props) => {
             <Text>{props.detail}</Text>
         </ScrollView>
           <View style={{top: 20}}>
-            <Button block danger onPress={() => props.onDismiss()}>Close</Button> 
+            <Button block warning onPress={() => props.onDismiss()}>Close</Button> 
           </View>  
         </View>
       </Modal>
