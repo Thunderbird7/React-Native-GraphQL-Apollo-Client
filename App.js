@@ -11,6 +11,8 @@ import {
   Modal, 
   TouchableHighlight,
   TouchableOpacity,
+  RefreshControl,
+  Platform,  
 } from 'react-native'
 import { 
   Container, 
@@ -25,10 +27,15 @@ import {
   Spinner,
 } from 'native-base'
 import ModalView from './ModalView'
-
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import codePush from 'react-native-code-push'
 
+const codePushOptions = { 
+  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+  updateDialog: true,
+  installMode: codePush.InstallMode.IMMEDIATE
+ }
 class App extends Component {
 
   state = {
@@ -121,5 +128,8 @@ const gqlQuery = gql`
   }
 `
 
-export default graphql(gqlQuery)(App)
+// wrap gql and codepush to container.
+const AppWithData = graphql(gqlQuery)
+App = codePush(codePushOptions)(App)
 
+export default AppWithData(App)
