@@ -83,7 +83,7 @@ class Featured extends Component {
     } else {
       return (
         <Container theme={theme} >
-          <Header><Title> Featured Movies v7</Title></Header>
+          <Header><Title> Featured Movies v8</Title></Header>
           <Content style={{backgroundColor: '#212121'}} refreshControl={
             <RefreshControl
               tintColor='white'
