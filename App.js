@@ -43,13 +43,6 @@ const codePushOptions = {
  }
 class App extends Component {
 
-  state = {
-    modalVisible: false,
-    title: '',
-    detail: '',
-    refreshing: false,
-  }
-
   constructor(props) {
     super(props)
   }
@@ -69,35 +62,6 @@ class App extends Component {
     })
   }
 
-  onRefresh() {
-    // begin refresh
-    this.setState({refreshing: true})
-    // call refetch function
-    this.props.data.refetch()
-    .then(()=>{
-      // refetch complete.
-      this.setState({refreshing: false})
-    })
-  }
-
-  setModalVisible(visible) {
-    this.setState({modalVisible: visible});
-  }
-
-  renderRow(item) {
-    return (
-        <ListItem onPress={()=> {
-            this.setModalVisible(true)
-            this.setState({title: item.node.title, detail: item.node.openingCrawl})
-        }}>
-            <Thumbnail circular size={80} style={{backgroundColor: 'dimgray'}} />
-            <H3 style={{color: 'goldenrod'}}>{item.node.title}</H3>
-            <Text style={{color: 'dimgray'}} note>By {item.node.director}</Text>
-            <Text style={{color: 'dimgray'}} note>Release {item.node.releaseDate}</Text>
-        </ListItem>
-    )
-  }
-
   render() {
     return (
     <ScrollableTabView 
@@ -111,43 +75,5 @@ class App extends Component {
 
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
-
-const gqlQuery = gql`
-  query {
-    allFilms {
-      edges {
-        node {
-          id
-          title
-          openingCrawl
-          director
-          releaseDate
-        }
-      }
-    }
-  }
-`
-
-// wrap gql and codepush to container.
-const AppWithData = graphql(gqlQuery)
-App = codePush(codePushOptions)(App)
-
-export default App
+// wrap codepush to container.
+export default codePush(codePushOptions)(App)
